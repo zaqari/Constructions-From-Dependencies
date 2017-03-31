@@ -130,19 +130,3 @@ def test(sentence):
 	ventral_stream = list(dep.triples())
 	for tuple in ventral_stream:
 		print(tuple)
-
-#Builds usable corpus data from search term, excluding titles.
-def corpus_builder(file, search):
-	doc = codecs.open(file, 'r', 'utf-8')
-	searchlines = doc.readlines()
-	doc.close()
-	doc2 = codecs.open('/Users/ZaqRosen/Desktop/Corpus.rtf', 'a', 'utf-8')
-	for i, line in enumerate(searchlines):
-		if search in line:
-			line2 = line.replace('\\', '').replace('}', '').replace('uc0u8232', '').replace('\'92', '\'').replace('a0', '').replace('\'93', '\"').replace('\'94', '\"').replace('\'96', ',').replace('\'97', ',').replace('f0fs24 ', '').replace('cf0 ', '')
-			res = depparse.raw_parse(line2)
-			dep = res.__next__()
-			streamofconsciousness = list(dep.triples())
-			if all(tuple[1] != 'compound' for tuple in streamofconsciousness):
-				doc2.write(line2)
-	doc2.close()
