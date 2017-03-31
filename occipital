@@ -1,10 +1,11 @@
 #imports Stanford’s Dependency Parser and sets up environment.
 from nltk.parse.stanford import StanfordDependencyParser as sparse
-pathmodelsjar = '/Users/ZaqRosen/nltk_data/stanford-english-corenlp-2016-01-10-models.jar'
-pathjar = '/Users/ZaqRosen/nltk_data/stanford-parser/stanford-parser.jar'
+pathmodelsjar = '/Users/PATH TO MODELS JAR'
+pathjar = '/Users/PATH TO STANFORD PARSER JAR'
 depparse = sparse(path_to_jar=pathjar, path_to_models_jar=pathmodelsjar)
 
-builderfile = '/Users/' + input('User: ') + '/Desktop/' + input('filename: ') + '.csv'
+directory = '/Users/' + input('User: ') + '/Desktop/'
+builderfile = directory + input('filename: ') + '.csv'
 
 #Limits analysis to solely the dependency tree level of interest
 def lmtc_pfc(ventral_stream, v2, litc_lmtc, litc_pfc, dobj):
@@ -148,10 +149,11 @@ def test(sentence):
 		print(tuple)
 
 def cleanup(file):
+	cleanfilename = directory + input('filename: ') + '.txt'
 	doc = codecs.open(file, 'r', 'utf-8')
 	searchlines = doc.readlines()
 	doc.close()
-	cdoc = codecs.open('/Users/ZaqRosen/Desktop/cleancorpus.txt', 'a', 'utf-8')
+	cdoc = codecs.open(cleanfilename, 'a', 'utf-8')
 	for i, line in enumerate(searchlines):
 		if '<file url=' not in line:
 			cdoc.write(line)
