@@ -4,6 +4,8 @@ pathmodelsjar = '/Users/ZaqRosen/nltk_data/stanford-english-corenlp-2016-01-10-m
 pathjar = '/Users/ZaqRosen/nltk_data/stanford-parser/stanford-parser.jar'
 depparse = sparse(path_to_jar=pathjar, path_to_models_jar=pathmodelsjar)
 
+builderfile = '/Users/' + input('User: ') + '/Desktop/' + input('filename: ') + '.csv'
+
 #Limits analysis to solely the dependency tree level of interest
 def lmtc_pfc(ventral_stream, v2, litc_lmtc, litc_pfc, dobj):
 	for tuple in ventral_stream:
@@ -14,6 +16,8 @@ def lmtc_pfc(ventral_stream, v2, litc_lmtc, litc_pfc, dobj):
 	for tuple in litc_lmtc:
 		litc_pfc.append(tuple[1])
 
+
+
 #Finds and arranges relevant oblique data
 def oblique(litc_lmtc, ventral_stream, v3, met_case_marker, adv_nmod):
 		v3.append(litc_lmtc[len(litc_lmtc)-1])
@@ -21,13 +25,23 @@ def oblique(litc_lmtc, ventral_stream, v3, met_case_marker, adv_nmod):
 			for tuple in ventral_stream:
 				if tuple[0] == v3[0][2] and tuple[1] == 'case':
 					met_case_marker.append(tuple[2])
-		if v3[0][1] == 'advmod':
+		elif v3[0][1] == 'advmod':
 			for tuple in ventral_stream:
 				met_case_marker.append(v3[0][2])
 				if tuple[0] == v3[0][2] and 'nmod' in tuple[1]:
 					adv_nmod.append(tuple[2])
+				elif tuple[0] == v3[0][2] and 'dep' in tuple[1]:
+					adv_nmod.append(tuple[2])
 				else:
 					adv_nmod.append(int(0))
+		else:
+			for item in v3:
+				if v3[0][1] == 'nmod:tmod':
+					for tuple in ventral_stream:
+						if tuple[0] == v3[0][2] and tuple[1] == 'case':
+							met_case_marker.append(tuple[2])
+
+
 
 #Generates the array that will be passed to KellyGEN
 def corpus_callosum(corpus_callosum1, met_case_marker, adv_nmod, dobj, v1, litc_pfc, litc_lmtc, v3):
@@ -45,6 +59,7 @@ def corpus_callosum(corpus_callosum1, met_case_marker, adv_nmod, dobj, v1, litc_
 	elif len(met_case_marker) == 0:
 		corpus_callosum1.append(int(0))
 		corpus_callosum1.append(int(0))
+
 
 #Prints and sends array to relevant next steps
 def brocas(sentence, litc_pfc, litc_lmtc, array, TEST='non'):
@@ -107,7 +122,7 @@ import csv
 
 #takes data and saves it to a CSV to build training file.
 def Training_Data_Builder(array):
-	with codecs.open('/Users/ZaqRosen/Desktop/Met_Training_Data.csv', 'a', 'utf-8') as csvfile:
+	with codecs.open(builderfile, 'a', 'utf-8') as csvfile:
 		databuilder = csv.writer(csvfile, delimiter=',',
 				quotechar='|',
 				quoting=csv.QUOTE_MINIMAL)
@@ -120,9 +135,10 @@ def pvc(file, search, function='non'):
 	searchlines = doc.readlines()
 	doc.close()
 	for i, line in enumerate(searchlines):
-		if search in line:
-			line2 = line.replace('\\', '').replace('}', '').replace('uc0u8232', '').replace('\'92', '\'').replace('a0', '').replace('\'93', '\"').replace('\'94', '\"').replace('\'96', ',').replace('\'97', ',').replace('f0fs24 ', '').replace('cf0 ', '')
-			occipital(line2, function)
+		for item in search:
+			if item in line:
+				line2 = line.replace('\\', '').replace('}', '').replace('uc0u8232', '').replace('\'92', '\'').replace('a0', '').replace('\'93', '\"').replace('\'94', '\"').replace('\'96', ',').replace('\'97', ',').replace('f0fs24 ', '').replace('cf0 ', '')
+				occipital(line2, function)
 
 def test(sentence):
 	res = depparse.raw_parse(sentence)
@@ -130,3 +146,14 @@ def test(sentence):
 	ventral_stream = list(dep.triples())
 	for tuple in ventral_stream:
 		print(tuple)
+
+def cleanup(file):
+	doc = codecs.open(file, 'r', 'utf-8')
+	searchlines = doc.readlines()
+	doc.close()
+	cdoc = codecs.open('/Users/ZaqRosen/Desktop/cleancorpus.txt', 'a', 'utf-8')
+	for i, line in enumerate(searchlines):
+		if '<file url=' not in line:
+			cdoc.write(line)
+	cdoc.close()
+
