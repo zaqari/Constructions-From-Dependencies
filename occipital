@@ -20,44 +20,28 @@ def lmtc_pfc(ventral_stream, v2, litc_lmtc, litc_pfc, dobj):
 
 
 #Finds and arranges relevant oblique data
-def oblique(litc_lmtc, ventral_stream, v3, met_case_marker, adv_nmod):
-		v3.append(litc_lmtc[len(litc_lmtc)-1])
-		if v3[0][1] == 'nmod':
-			for tuple in ventral_stream:
-				if tuple[0] == v3[0][2] and tuple[1] == 'case':
-					met_case_marker.append(tuple[2])
-		elif v3[0][1] == 'advmod':
-			for tuple in ventral_stream:
-				met_case_marker.append(v3[0][2])
-				if tuple[0] == v3[0][2] and 'nmod' in tuple[1]:
-					adv_nmod.append(tuple[2])
-				elif tuple[0] == v3[0][2] and 'dep' in tuple[1]:
-					adv_nmod.append(tuple[2])
-				else:
-					adv_nmod.append(int(0))
-		else:
-			for item in v3:
-				if v3[0][1] == 'nmod:tmod':
-					for tuple in ventral_stream:
-						if tuple[0] == v3[0][2] and tuple[1] == 'case':
-							met_case_marker.append(tuple[2])
+def oblique(ventral_stream, v3, met_case_marker, adv_nmod, search):
+	for tuple in ventral_stream:
+		if 'mod' in tuple[1] and search in tuple[2][0]:
+				v3.append(tuple[2])
+				for tuple in ventral_stream:
+					if tuple[1] == 'case' and tuple[0] == v3[0]:
+						met_case_marker.append(tuple[2])
+					elif tuple[2] == v3[0] and 'adv' in tuple[1]:
+						met_case_marker.append(tuple[0])
 
 
 
-#Generates the array that will be passed to KellyGEN
+#Generates the array that will be passed on as an interpretable array.
 def corpus_callosum(corpus_callosum1, met_case_marker, adv_nmod, dobj, v1, litc_pfc, litc_lmtc, v3):
 	corpus_callosum1.append(v1[0][2][0])
 	corpus_callosum1.append(dobj[0]) if len(dobj) != 0 else corpus_callosum1.append('0')
 	corpus_callosum1.append(str(litc_pfc).replace(',', ' '))
 	corpus_callosum1.append(litc_lmtc[0][0][0])
 	if len(met_case_marker) != 0:
-		if v3[0][1] == 'nmod':
-			corpus_callosum1.append(met_case_marker[0][0])
-			corpus_callosum1.append(v3[0][2][0])
-		elif v3[0][1] == 'advmod':
-			corpus_callosum1.append(met_case_marker[0][0])
-			corpus_callosum1.append(adv_nmod[0])
-	elif len(met_case_marker) == 0:
+		corpus_callosum1.append(met_case_marker[0][0])
+		corpus_callosum1.append(v3[0][0])
+	elif len(met_case_marker) == 0 and len(adv_nmod) == 0:
 		corpus_callosum1.append(int(0))
 		corpus_callosum1.append(int(0))
 
