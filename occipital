@@ -7,7 +7,7 @@ depparse = sparse(path_to_jar=pathjar, path_to_models_jar=pathmodelsjar)
 directory = '/Users/' + input('User: ') + '/Desktop/'
 builderfile = directory + input('filename: ') + '.csv'
 
-#Limits analysis to solely the dependency tree level of interest
+Limits analysis to solely the dependency tree level of interest
 def lmtc_pfc(ventral_stream, v2, litc_lmtc, litc_pfc, dobj):
 	for tuple in ventral_stream:
 		if tuple[0] == v2:
@@ -17,22 +17,21 @@ def lmtc_pfc(ventral_stream, v2, litc_lmtc, litc_pfc, dobj):
 	for tuple in litc_lmtc:
 		litc_pfc.append(tuple[1])
 
-
-
 #Finds and arranges relevant oblique data
-def oblique(ventral_stream, v3, met_case_marker, adv_nmod, search):
+def oblique(ventral_stream, v3, met_case_marker, search):
 	for tuple in ventral_stream:
-		if 'mod' in tuple[1] and search in tuple[2][0]:
+		if 'mod' in tuple[1] and search in (tuple[2][0] or tuple[0][0]):
+			if 'adv' in tuple[1]:	
+				v3.append(tuple[0])
+				met_case_marker.append(tuple[2])
+			else:
 				v3.append(tuple[2])
 				for tuple in ventral_stream:
-					if tuple[1] == 'case' and tuple[0] == v3[0]:
+					if tuple[0] == v3[0] and tuple[1] == 'case':
 						met_case_marker.append(tuple[2])
-					elif tuple[2] == v3[0] and 'adv' in tuple[1]:
-						met_case_marker.append(tuple[0])
 
 
-
-#Generates the array that will be passed on as an interpretable array.
+#Generates the array that will be passed to KellyGEN
 def corpus_callosum(corpus_callosum1, met_case_marker, adv_nmod, dobj, v1, litc_pfc, litc_lmtc, v3):
 	corpus_callosum1.append(v1[0][2][0])
 	corpus_callosum1.append(dobj[0]) if len(dobj) != 0 else corpus_callosum1.append('0')
@@ -67,9 +66,7 @@ def brocas(sentence, litc_pfc, litc_lmtc, array, TEST='non'):
 	print('==============')
 
 
-
-#Integrates all processes to create array and pass data on. Sanitizes lists from last search.
-def occipital(sentence, TEST='non'):
+def occipital(sentence, search1, TEST='non'):
 	#Resets triggers and data failsafes
 	v1 = []
 	v2 = ''
@@ -91,7 +88,7 @@ def occipital(sentence, TEST='non'):
 	if len(v1) > int(0):
 		v2 = v1[0][0]
 		lmtc_pfc(ventral_stream, v2, litc_lmtc, litc_pfc, dobj)
-		oblique(litc_lmtc, ventral_stream, v3, met_case_marker, adv_nmod)
+		oblique(ventral_stream, v3, met_case_marker, search1)
 		corpus_callosum(corpus_callosum1, met_case_marker, adv_nmod, dobj, v1, litc_pfc, litc_lmtc, v3)
 		brocas(sentence, litc_pfc, litc_lmtc, corpus_callosum1, TEST)
 		#print(corpus_callosum1)
@@ -101,18 +98,22 @@ def occipital(sentence, TEST='non'):
 		print(sentence)
 		print('==============')
 
+
 #Data packaging
 import codecs
 import csv
 
+
 #takes data and saves it to a CSV to build training file.
 def Training_Data_Builder(array):
-	with codecs.open(builderfile, 'a', 'utf-8') as csvfile:
+	with codecs.open('/Users/ZaqRosen/Desktop/Met_Training_Data.csv', 'a', 'utf-8') as csvfile:
 		databuilder = csv.writer(csvfile, delimiter=',',
 				quotechar='|',
 				quoting=csv.QUOTE_MINIMAL)
 		databuilder.writerow(array)
 	csvfile.close()
+
+
 
 #Builds the training data from a printed corpus. Designate your corpus file, the search term(s) you’re looking for, and it’ll feed each one to occipital() in build mode. 
 def pvc(file, search, function='non'):
@@ -123,7 +124,9 @@ def pvc(file, search, function='non'):
 		for item in search:
 			if item in line:
 				line2 = line.replace('\\', '').replace('}', '').replace('uc0u8232', '').replace('\'92', '\'').replace('a0', '').replace('\'93', '\"').replace('\'94', '\"').replace('\'96', ',').replace('\'97', ',').replace('f0fs24 ', '').replace('cf0 ', '')
-				occipital(line2, function)
+				occipital(line2, search, function)
+
+
 
 def test(sentence):
 	res = depparse.raw_parse(sentence)
@@ -131,15 +134,3 @@ def test(sentence):
 	ventral_stream = list(dep.triples())
 	for tuple in ventral_stream:
 		print(tuple)
-
-def cleanup(file):
-	cleanfilename = directory + input('filename: ') + '.txt'
-	doc = codecs.open(file, 'r', 'utf-8')
-	searchlines = doc.readlines()
-	doc.close()
-	cdoc = codecs.open(cleanfilename, 'a', 'utf-8')
-	for i, line in enumerate(searchlines):
-		if '<file url=' not in line:
-			cdoc.write(line)
-	cdoc.close()
-
