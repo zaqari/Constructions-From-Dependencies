@@ -124,7 +124,7 @@ def pvc(file, search, function='non'):
 		for item in search:
 			if item in line:
 				line2 = line.replace('\\', '').replace('}', '').replace('uc0u8232', '').replace('\'92', '\'').replace('a0', '').replace('\'93', '\"').replace('\'94', '\"').replace('\'96', ',').replace('\'97', ',').replace('f0fs24 ', '').replace('cf0 ', '')
-				occipital(line2, search, function)
+				occipital(line2, item, function)
 
 
 
