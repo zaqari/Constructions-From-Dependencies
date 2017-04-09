@@ -106,7 +106,7 @@ import csv
 
 #takes data and saves it to a CSV to build training file.
 def Training_Data_Builder(array):
-	with codecs.open('/Users/ZaqRosen/Desktop/Met_Training_Data.csv', 'a', 'utf-8') as csvfile:
+	with codecs.open(builderfile, 'a', 'utf-8') as csvfile:
 		databuilder = csv.writer(csvfile, delimiter=',',
 				quotechar='|',
 				quoting=csv.QUOTE_MINIMAL)
