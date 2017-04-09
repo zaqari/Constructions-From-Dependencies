@@ -8,6 +8,7 @@ print('=========')
 print('')
 print('To run the program through a corpus downloaded on your computer, run the function pvc(), with the corpus file location on your computer for the first variable, and a list of search terms for the second variable. If you want the system to print out a .csv with your collected data, enter str(build) in as the third variable.')
 print('')
+print('')
 print('=========')
 print('')
 from nltk.parse.stanford import StanfordDependencyParser as sparse
