@@ -1,4 +1,3 @@
-#Not sure if this is particularly useful when building an initial corpus . . . but this definitely works ex post facto.
 #imports Stanford’s Dependency Parser and sets up environment.
 
 print('Before starting, the script will help you set up the paths to the Stanford dependency parser components needed to run the raw text parser. As the system is set up, it will not print out the whole sentence as part of the array. You can change this by deleting the hashtag indicating that this was a note in the corpus_callosum() module prior to running.')
@@ -7,6 +6,9 @@ print('')
 print('This script is designed to look for keywords that can be construed as the target domain in metaphor research.')
 print('=========')
 print('')
+print('To run the program through a corpus downloaded on your computer, run the function pvc(), with the corpus file location on your computer for the first variable, and a list of search terms for the second variable. If you want the system to print out a .csv with your collected data, enter str(build) in as the third variable.')
+print('')
+print('=========')
 print('')
 from nltk.parse.stanford import StanfordDependencyParser as sparse
 pathmodelsjar = input('path to the Stanford dependency language models you intend to use: ')
@@ -114,7 +116,7 @@ import csv
 
 #takes data and saves it to a CSV to build training file.
 def Training_Data_Builder(array):
-	with codecs.open('/Users/ZaqRosen/Desktop/Met_Training_Data.csv', 'a', 'utf-8') as csvfile:
+	with codecs.open(builderfile, 'a', 'utf-8') as csvfile:
 		databuilder = csv.writer(csvfile, delimiter=',',
 				quotechar='|',
 				quoting=csv.QUOTE_MINIMAL)
