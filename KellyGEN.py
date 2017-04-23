@@ -12,8 +12,8 @@ print('')
 print('=========')
 print('')
 from nltk.parse.stanford import StanfordDependencyParser as sparse
-pathmodelsjar = input('path to the Stanford dependency language models you intend to use: ')
-pathjar = input('path to the .jar for Stanford dependency parser: ')
+pathmodelsjar = input('path to the LANGUAGE MODELS you intend to use: ')
+pathjar = input('path to the .jar for Stanford dependency parser--the file should be stanford-parser.jar: ')
 depparse = sparse(path_to_jar=pathjar, path_to_models_jar=pathmodelsjar)
 
 directory = '/Users/' + input('the computer user name: ') + '/Desktop/'
