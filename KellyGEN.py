@@ -116,8 +116,8 @@ import codecs
 import csv
 
 #takes data and saves it to a CSV to build training file.
-def Training_Data_Builder(array):
-	with codecs.open(builderfile, 'a', 'utf-8') as csvfile:
+def Training_Data_Builder(builder=builderfile, array):
+	with codecs.open(builder, 'a', 'utf-8') as csvfile:
 		databuilder = csv.writer(csvfile, delimiter=',',
 				quotechar='|',
 				quoting=csv.QUOTE_MINIMAL)
