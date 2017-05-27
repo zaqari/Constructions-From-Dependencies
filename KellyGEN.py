@@ -33,33 +33,37 @@ def lmtc_pfc(ventral_stream, v2, litc_lmtc, litc_pfc, dobj):
 def oblique(ventral_stream, v3, met_case_marker, search):
 	for tuple in ventral_stream:
 		if search in tuple[2][0] and 'JJ' in tuple[2][1]:
-			v3.append(tuple[2][0])
-			met_case_marker.append(tuple[0][0])
-		elif 'mod' in tuple[1] and search in (tuple[2][0] or tuple[0][0]):
-			v3.append(tuple[2])
-			for tuple in ventral_stream:
-				if tuple[0] == v3[0] and tuple[1] == 'case':
-					met_case_marker.append(tuple[2])
-				elif search in tuple[2][0] and 'RB' in tuple[0][1]:
-					met_case_marker.append(tuple[0])
+			v3.append((tuple[2][0], tuple[0][0]))
+		elif search in tuple[0][0] and 'JJ' in tuple[2][1]:
+			v3.append((tuple[2][0], tuple[0][0]))
+		elif 'mod' in tuple[1]:
+			if search in tuple[2][0] or search in tuple[0][0]:
+				for tuple in ventral_stream:
+					if tuple[1] == 'case':
+						v3.append((tuple[2][0], tuple[0][0]))
+					elif search in tuple[2][0] and 'RB' in tuple[0][1]:
+						v3.append((tuple[2][0], tuple[0][0]))
 
 
 
 
 #Generates the array that will be passed to KellyGEN
-def corpus_callosum(corpus_callosum1, met_case_marker, adv_nmod, dobj, v1, litc_pfc, litc_lmtc, v3, sentence, TEST):
-	corpus_callosum1.append(v1[0][2][0])
-	corpus_callosum1.append(dobj[0]) if len(dobj) != 0 else corpus_callosum1.append('0')
-	corpus_callosum1.append(str(litc_pfc).replace(',', ' '))
-	corpus_callosum1.append(litc_lmtc[0][0][0])
-	if len(met_case_marker) != 0:
-		corpus_callosum1.append(met_case_marker[0][0])
-		corpus_callosum1.append(v3[0][0])
-	elif len(met_case_marker) == 0 and len(adv_nmod) == 0:
-		corpus_callosum1.append(int(0))
-		corpus_callosum1.append(int(0))
-	#corpus_callosum1.append(sentence)
-	brocas(sentence, litc_pfc, litc_lmtc, corpus_callosum1, TEST)
+def corpus_callosum(corpus_callosum1, met_case_marker, adv_nmod, dobj, v1, litc_pfc, litc_lmtc, v3, sentence, media, TEST):
+	for item in v3:
+		#corpus_callosum1.append(media)
+		corpus_callosum1.append(v1[0][2][0])
+		corpus_callosum1.append(dobj[0]) if len(dobj) != 0 else corpus_callosum1.append('0')
+		corpus_callosum1.append(str(litc_pfc).replace(',', ' '))
+		corpus_callosum1.append(litc_lmtc[0][0][0])
+		if len(v3) != 0:
+			corpus_callosum1.append(item[0])
+			corpus_callosum1.append(item[1])
+		elif len(v3) == 0 and len(adv_nmod) == 0:
+			corpus_callosum1.append(int(0))
+			corpus_callosum1.append(int(0))
+		#corpus_callosum1.append(sentence)
+		brocas(sentence, litc_pfc, litc_lmtc, corpus_callosum1, TEST)
+		corpus_callosum1 = []
 
 #Prints and sends array to relevant next steps
 def brocas(sentence, litc_pfc, litc_lmtc, array, TEST='non'):
@@ -81,7 +85,7 @@ def brocas(sentence, litc_pfc, litc_lmtc, array, TEST='non'):
 	print(array)
 	print('==============')
 
-def occipital(sentence, search1=None, TEST='non'):
+def occipital(sentence, search1, mediaitem='non', TEST='non'):
 	#Resets triggers and data failsafes
 	v1 = []
 	v2 = ''
@@ -104,7 +108,7 @@ def occipital(sentence, search1=None, TEST='non'):
 		v2 = v1[0][0]
 		lmtc_pfc(ventral_stream, v2, litc_lmtc, litc_pfc, dobj)
 		oblique(ventral_stream, v3, met_case_marker, search1)
-		corpus_callosum(corpus_callosum1, met_case_marker, adv_nmod, dobj, v1, litc_pfc, litc_lmtc, v3, sentence, TEST)
+		corpus_callosum(corpus_callosum1, met_case_marker, adv_nmod, dobj, v1, litc_pfc, litc_lmtc, v3, sentence, mediaitem, TEST)
 		#print(corpus_callosum1)
 	elif len(v1) == 0:
 		print('==============')
