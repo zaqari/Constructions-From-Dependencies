@@ -1,18 +1,22 @@
-#Problem with litc such that it's not returning a value to corpus callosum . . .
-# or anywhere, really. System currently breaks during oblique() in corpus
-# Callosum, which means the conditions for the for gate preceding packaging
-# are never met--v3 is ALWAYS an empty list. Tried fixing (current iteration).
-# Information is not getting passed and stored in corpus_callosum. The question
-# is . . . why???
+#Before starting, the script will help you set up the paths to the Stanford dependency parser 
+# components needed to run the raw text parser. As the system is set up, it will not print out 
+# the whole sentence as part of the array. You can change this by deleting the hashtag 
+# indicating that this was a note in the corpus_callosum() module prior to running
+
+#To run the program through a corpus downloaded on your computer, run the function pvc(), with 
+# the corpus file location on your computer for the first variable, and a list of search terms 
+# for the second variable. If you want the system to print out a .csv with your collected data, 
+# enter str(build) in as the third variable.
 
 #imports Stanford’s Dependency Parser and sets up environment.
 from nltk.parse.stanford import StanfordDependencyParser as sparse
-pathmodelsjar = '/Users/ZaqRosen/nltk_data/stanford-english-corenlp-2016-01-10-models.jar'
-pathjar = '/Users/ZaqRosen/nltk_data/stanford-parser/stanford-parser.jar'
+pathmodelsjar = input('path to the LANGUAGE MODELS you intend to use: ')
+pathjar = input('path to the .jar for Stanford dependency parser--the file should be stanford-parser.jar: ')
 depparse = sparse(path_to_jar=pathjar, path_to_models_jar=pathmodelsjar)
 
-#Update progress note:
-print('Start from idea for the corpus all for media_type.start()')
+#file directories for data storage and corpus input.
+directory = '/Users/' + input('the computer user name: ') + '/Desktop/'
+builderfile = directory + input('filename for csv output: ') + '.csv'
 
 #
 ##
@@ -51,6 +55,11 @@ def obl(oblique, lmtc, ventral_stream):
 			for tuple in ventral_stream:
 				oblique.append((tuple[2][0], ph_head[0])) if tuple[1]=='case' and tuple[0]==ph_head else 0
 
+				
+#Just in case it becomes necessary to trouble shoot why a particular segment
+# in corpus_callosum isn't being filled and integrated. This is a simple
+# response to the question: why is there a string value error in the code??
+# it is currently noted out in the normal functioning of the program.
 def print_protocol( a, b, c, d):
 	e = [a, b, c, d]
 	for item in e:
@@ -137,7 +146,7 @@ import csv
 
 #takes data and saves it to a CSV to build training file.
 def Training_Data_Builder(array):
-	with codecs.open('/Users/ZaqRosen/Desktop/Thesis_data.csv', 'a', 'utf-8') as csvfile:
+	with codecs.open(builderfile, 'a', 'utf-8') as csvfile:
 		databuilder = csv.writer(csvfile, delimiter=',',
 				quotechar='|',
 				quoting=csv.QUOTE_MINIMAL)
@@ -146,7 +155,7 @@ def Training_Data_Builder(array):
 
 #For each corpus in the current study, you need to reset the
 # var Listy to include the lexical items of interest.
-Listy = ['idea', 'Idea']
+Listy = [#define search terms here if you choose#]
 
 #Use the items in this list to classify data according to the media type.
 # If the list breaks, remove that item from this list manually.
@@ -156,7 +165,7 @@ media_list = ['Written books and periodicals', 'Written miscellaneous', 'Spoken 
 # the search term(s) you’re looking for, and it’ll feed each one to occipital()
 # in build mode. 
 def pvc(search=Listy, function='build', media_types=media_list):
-	read_file = '/Users/ZaqRosen/Desktop/Thesis/Corpora/' + input('Which target referent, sir? ') + '_thesis.txt'
+	read_file = directory + input('What is the corpus called, sir? (make sure the file is stored on your desktop!!)  ')
 	doc = codecs.open(read_file, 'r', 'utf-8')
 	searchlines = doc.readlines()
 	doc.close()
