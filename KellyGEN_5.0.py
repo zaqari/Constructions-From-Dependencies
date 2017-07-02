@@ -111,25 +111,28 @@ def brocas(sentence, pfc, lmtc, array, TEST='non'):
 
 #Occipital(), named after the occipital lobe, is the integrative tissue
 # that triggers the whole process, and links all the components together.
-def occipital(sentence, search1, mediaitem='non', TEST='non'):
+ef occipital(sentence, search1, mediaitem='non', TEST='non'):
 	#Resets triggers and data failsafes
 	v1 = ''
 	lmtc = []
 	#components from Stanford's Dependency parser to create dep. tree.
-	res = depparse.raw_parse(sentence)
-	dep = res.__next__()
-	ventral_stream = list(dep.triples())
-	for tuple in ventral_stream:
-		if search1 in tuple[2][0]:
-			v1=tuple[0]
-		elif search1 in tuple[0][0] and 'cop' in tuple[1]:
-			v1=tuple[0]
-		elif search1 in tuple[0][0] and 'neg' in tuple[1]:
-			v1=tuple[0]
-	for tuple in ventral_stream:
-		if tuple[0]==v1:
-			lmtc.append(tuple)
-	corpus_callosum(ventral_stream, v1, lmtc, sentence, mediaitem, TEST) if len(lmtc)>0 else 0
+	try:
+		res = depparse.raw_parse(sentence)
+		dep = res.__next__()
+		ventral_stream = list(dep.triples())
+		for tuple in ventral_stream:
+			if search1 in tuple[2][0]:
+				v1=tuple[0]
+			elif search1 in tuple[0][0] and 'cop' in tuple[1]:
+				v1=tuple[0]
+			elif search1 in tuple[0][0] and 'neg' in tuple[1]:
+				v1=tuple[0]
+		for tuple in ventral_stream:
+			if tuple[0]==v1:
+				lmtc.append(tuple)
+		corpus_callosum(ventral_stream, v1, lmtc, sentence, mediaitem, TEST) if len(lmtc)>0 else print('Bloody hell, you dolt-minded crayon!')
+	except OSError:
+		print('Bloody hell, you dolt-minded crayon!')
 
 
 
